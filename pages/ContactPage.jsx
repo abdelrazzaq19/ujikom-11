@@ -1,18 +1,29 @@
 import React, { useState } from 'react';
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaWhatsapp, FaClock } from 'react-icons/fa';
 import PageHeader from '../components/PageHeader';
+import { contactAPI } from '../src/services/api';
 
 export default function ContactPage() {
-  const [form, setForm] = useState({ nama: '', email: '', subjek: '', pesan: '' });
-  const [sent, setSent] = useState(false);
+  const [form, setForm]       = useState({ nama: '', email: '', subjek: '', pesan: '' });
+  const [status, setStatus]   = useState('idle'); // idle | loading | success | error
+  const [errMsg, setErrMsg]   = useState('');
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => setSent(false), 4000);
-    setForm({ nama: '', email: '', subjek: '', pesan: '' });
+    setStatus('loading');
+    setErrMsg('');
+
+    try {
+      await contactAPI.submit(form);
+      setStatus('success');
+      setForm({ nama: '', email: '', subjek: '', pesan: '' });
+      setTimeout(() => setStatus('idle'), 5000);
+    } catch (err) {
+      setStatus('error');
+      setErrMsg(err.message || 'Gagal mengirim pesan. Coba lagi.');
+    }
   };
 
   const inputStyle = {
@@ -42,7 +53,6 @@ export default function ContactPage() {
             <p style={{ color: '#A07860', fontSize: 14, lineHeight: 1.7, marginBottom: 32 }}>
               Jangan ragu untuk menghubungi kami. Tim kami siap melayani Anda dengan sepenuh hati.
             </p>
-
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 32 }}>
               {kontakInfo.map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: 14, alignItems: 'flex-start', background: 'white', borderRadius: 12, padding: '14px 16px', boxShadow: '0 2px 12px rgba(107,76,59,0.05)' }}>
@@ -56,8 +66,6 @@ export default function ContactPage() {
                 </div>
               ))}
             </div>
-
-            {/* Google Maps iframe */}
             <div style={{ borderRadius: 14, overflow: 'hidden', boxShadow: '0 4px 20px rgba(107,76,59,0.08)' }}>
               <iframe
                 title="Lokasi LeniSnacks"
@@ -74,9 +82,17 @@ export default function ContactPage() {
             <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 800, color: '#6B4C3B', margin: '0 0 6px' }}>Kirim Pesan</h2>
             <p style={{ color: '#A07860', fontSize: 13, marginBottom: 28 }}>Isi form di bawah, kami akan membalas dalam 1x24 jam.</p>
 
-            {sent && (
+            {/* Success */}
+            {status === 'success' && (
               <div style={{ background: '#F0FAF4', border: '1px solid #B8E8C8', borderRadius: 10, padding: '12px 16px', marginBottom: 20, color: '#4A9A6A', fontSize: 13, fontWeight: 600 }}>
                 ✅ Pesan berhasil dikirim! Kami akan segera menghubungi Anda.
+              </div>
+            )}
+
+            {/* Error */}
+            {status === 'error' && (
+              <div style={{ background: '#FFF0F0', border: '1px solid #F0B8B8', borderRadius: 10, padding: '12px 16px', marginBottom: 20, color: '#C0392B', fontSize: 13, fontWeight: 600 }}>
+                ❌ {errMsg}
               </div>
             )}
 
@@ -108,14 +124,18 @@ export default function ContactPage() {
                   onFocus={e => e.target.style.borderColor = '#D4956A'}
                   onBlur={e => e.target.style.borderColor = '#DEC9B2'} />
               </div>
-              <button type="submit" style={{
-                background: '#D4956A', color: 'white', padding: '14px', borderRadius: 50,
-                border: 'none', fontSize: 14, fontWeight: 700, cursor: 'pointer',
+              <button type="submit" disabled={status === 'loading'} style={{
+                background: status === 'loading' ? '#C4A882' : '#D4956A',
+                color: 'white', padding: '14px', borderRadius: 50,
+                border: 'none', fontSize: 14, fontWeight: 700,
+                cursor: status === 'loading' ? 'not-allowed' : 'pointer',
                 letterSpacing: '0.05em', transition: 'background 0.2s', marginTop: 4,
               }}
-                onMouseEnter={e => e.target.style.background = '#C07850'}
-                onMouseLeave={e => e.target.style.background = '#D4956A'}
-              >Kirim Pesan ✉️</button>
+                onMouseEnter={e => { if (status !== 'loading') e.target.style.background = '#C07850'; }}
+                onMouseLeave={e => { if (status !== 'loading') e.target.style.background = '#D4956A'; }}
+              >
+                {status === 'loading' ? '⏳ Mengirim...' : 'Kirim Pesan ✉️'}
+              </button>
             </form>
           </div>
         </div>

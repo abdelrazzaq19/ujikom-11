@@ -1,0 +1,32 @@
+{
+  "dependencies": {
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-icons": "^5.6.0",
+    "react-router-dom": "^7.14.2",
+    "vite": "^5.4.21"
+  },
+  "name": "ujikom",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abdelrazzaq19/ujikom-11.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/abdelrazzaq19/ujikom-11/issues"
+  },
+  "homepage": "https://github.com/abdelrazzaq19/ujikom-11#readme",
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4"
+  }
+}

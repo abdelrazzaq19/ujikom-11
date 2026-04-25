@@ -3,10 +3,10 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
-import AboutPage from './pages/AboutPage';
 import ProductsPage from './pages/ProductsPage';
 import GalleryPage from './pages/GalleryPage';
 import ContactPage from './pages/ContactPage';
+import AboutPage from './pages/AboutPage';
 
 function ScrollToTop() {
   const { pathname } = useLocation();

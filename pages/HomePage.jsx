@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { productsData } from '../data/productsData';
 import ProductCard from '../components/ProductCard';
+import { productsAPI } from '../src/services/api';
 
 const testimonials = [
   { id: 1, nama: 'Sari W.', kota: 'Jakarta', pesan: 'Keripik bayamnya enak banget, renyah dan tidak berminyak. Pasti beli lagi!', bintang: 5 },
@@ -17,6 +17,14 @@ const keunggulan = [
 ];
 
 export default function HomePage() {
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+
+  useEffect(() => {
+    productsAPI.getAll({ limit: 3 })
+      .then(res => setFeaturedProducts(res.data))
+      .catch(() => { });
+  }, []);
+
   return (
     <div>
       {/* Hero */}
@@ -42,19 +50,11 @@ export default function HomePage() {
               Camilan lezat berkualitas tinggi, dibuat dengan bahan pilihan dan penuh cinta. Nikmati setiap gigitan bersama keluarga tercinta.
             </p>
             <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-              <Link to="/products" style={{
-                background: '#D4956A', color: 'white', padding: '13px 28px',
-                borderRadius: 50, fontSize: 14, fontWeight: 700, textDecoration: 'none',
-                boxShadow: '0 8px 30px rgba(212,149,106,0.4)', transition: 'all 0.3s',
-              }}
+              <Link to="/products" style={{ background: '#D4956A', color: 'white', padding: '13px 28px', borderRadius: 50, fontSize: 14, fontWeight: 700, textDecoration: 'none', boxShadow: '0 8px 30px rgba(212,149,106,0.4)', transition: 'all 0.3s' }}
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'none'; }}
               >🛒 Lihat Produk</Link>
-              <Link to="/about" style={{
-                background: 'transparent', color: 'white', padding: '13px 28px',
-                borderRadius: 50, fontSize: 14, fontWeight: 700, textDecoration: 'none',
-                border: '2px solid rgba(255,255,255,0.3)', transition: 'all 0.3s',
-              }}
+              <Link to="/about" style={{ background: 'transparent', color: 'white', padding: '13px 28px', borderRadius: 50, fontSize: 14, fontWeight: 700, textDecoration: 'none', border: '2px solid rgba(255,255,255,0.3)', transition: 'all 0.3s' }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = 'white'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'; e.currentTarget.style.background = 'transparent'; }}
               >Tentang Kami</Link>
@@ -117,14 +117,10 @@ export default function HomePage() {
             <p style={{ color: '#A07860', fontSize: 15, maxWidth: 480, margin: '0 auto' }}>Dicintai ribuan pelanggan setia kami di seluruh Indonesia.</p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 24 }}>
-            {productsData.slice(0, 3).map(p => <ProductCard key={p.id} product={p} />)}
+            {featuredProducts.map(p => <ProductCard key={p.id} product={p} />)}
           </div>
           <div style={{ textAlign: 'center', marginTop: 44 }}>
-            <Link to="/products" style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              border: '2px solid #D4956A', color: '#D4956A', padding: '12px 32px',
-              borderRadius: 50, fontSize: 14, fontWeight: 700, textDecoration: 'none', transition: 'all 0.25s',
-            }}
+            <Link to="/products" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '2px solid #D4956A', color: '#D4956A', padding: '12px 32px', borderRadius: 50, fontSize: 14, fontWeight: 700, textDecoration: 'none', transition: 'all 0.25s' }}
               onMouseEnter={e => { e.currentTarget.style.background = '#D4956A'; e.currentTarget.style.color = 'white'; }}
               onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#D4956A'; }}
             >Lihat Semua Produk →</Link>
@@ -142,7 +138,7 @@ export default function HomePage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
             {testimonials.map(t => (
               <div key={t.id} style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 18, padding: 26 }}>
-                <div style={{ display: 'flex', gap: 2, marginBottom: 14 }}>{[1,2,3,4,5].map(s => <span key={s} style={{ fontSize: 15, color: '#F5D5BC' }}>★</span>)}</div>
+                <div style={{ display: 'flex', gap: 2, marginBottom: 14 }}>{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ fontSize: 15, color: '#F5D5BC' }}>★</span>)}</div>
                 <p style={{ color: 'rgba(255,255,255,0.82)', fontSize: 14, lineHeight: 1.7, fontStyle: 'italic', margin: '0 0 18px' }}>"{t.pesan}"</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <div style={{ width: 38, height: 38, borderRadius: '50%', background: '#D4956A', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: 15 }}>{t.nama[0]}</div>
